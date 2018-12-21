@@ -24,11 +24,15 @@ namespace ThompsonSamplingDemo
             {
                 Console.WriteLine("Trial " + trial);
                 for (int i = 0; i < N; ++i)
+                {
                     probs[i] = bs.Sample(S[i] + 1.0, F[i] + 1.0);
+                }
 
                 Console.Write("sampling probs = ");
                 for (int i = 0; i < N; ++i)
+                {
                     Console.Write(probs[i].ToString("F4") + " ");
+                }
 
                 Console.WriteLine(string.Empty);
                 int machine = 0;
