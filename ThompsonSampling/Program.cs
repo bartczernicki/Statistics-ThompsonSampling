@@ -7,25 +7,33 @@ namespace ThompsonSamplingDemo
         static void Main(string[] args)
         {
             // Based on MSDN article: https://msdn.microsoft.com/en-us/magazine/mt829274.aspx
-            Console.WriteLine("Begin Thompson sampling demo");
+            Console.WriteLine("Begin Thompson Sampling Demo");
 
+            // Define the number of of machines and their associated "hidden" success probabilities (payout)
+            // The "hidden" probabilities are not known to us (in a real scenario) and we are trying to find the best one
             int N = 3;
             double[] means = new double[] { 0.2, 0.25, 0.35 };
             double[] probs = new double[N];
-            int[] S = new int[N];
-            int[] F = new int[N];
+            int[] successes = new int[N];
+            int[] failures = new int[N];
 
-            Random rnd = new Random(4);
+            // Initialize the BetaSampler with a random number
+            // Note: use a hardcoded seed for reproducability
+            Random rnd = new Random(2);
             var rndInt = rnd.Next();
-
             BetaSampler bs = new BetaSampler(rndInt);
 
-            for (int trial = 0; trial < 25000; ++trial)
+            // Main Trials Loop
+            for (int trial = 0; trial < 20; ++trial)
             {
-                Console.WriteLine("Trial " + trial);
+                Console.WriteLine("Trial " + (trial+1));
+                // For each machine, sample new estimated probability from a beta distribution,
+                // based on past successs/failures from trials.  First iteration starts at 0/0 for each machine
                 for (int i = 0; i < N; ++i)
                 {
-                    probs[i] = bs.Sample(S[i] + 1.0, F[i] + 1.0);
+                    // The probability results for each machine will be different each time the Sample method is run
+                    // One specific "point" is selected from the entire Beta distribution
+                    probs[i] = bs.Sample(successes[i] + 1.0, failures[i] + 1.0);
                 }
 
                 Console.Write("sampling probs = ");
@@ -37,6 +45,8 @@ namespace ThompsonSamplingDemo
                 Console.WriteLine(string.Empty);
                 int machine = 0;
                 double highProb = 0.0;
+
+                // Select the machine with the highest probability from the Beta distribution (Beta Sampler)
                 for (int i = 0; i < N; ++i)
                 {
                     if (probs[i] > highProb)
@@ -46,32 +56,32 @@ namespace ThompsonSamplingDemo
                     }
                 }
 
-                Console.Write("Playing machine " + machine);
+                Console.Write("Playing machine " + (machine+1));
                 double p = rnd.NextDouble();
 
                 if (p < means[machine])
                 {
                     Console.WriteLine(" -- win");
-                    ++S[machine];
+                    ++successes[machine];
                 }
                 else
                 {
                     Console.WriteLine(" -- lose");
-                    ++F[machine];
+                    ++failures[machine];
                 }
             } // End of Trials Loop
 
             Console.WriteLine("Final estimates of means: ");
             for (int i = 0; i < N; ++i)
             {
-                double u = (S[i] * 1.0) / (S[i] + F[i]);
+                double u = (successes[i] * 1.0) / (successes[i] + failures[i]);
                 Console.WriteLine(u.ToString("F4") + "  ");
             }
 
             Console.WriteLine("Number times machine played:");
             for (int i = 0; i < N; ++i)
             {
-                int ct = S[i] + F[i];
+                int ct = successes[i] + failures[i];
                 Console.WriteLine(ct + "  ");
             }
 
