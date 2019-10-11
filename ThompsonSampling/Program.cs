@@ -14,7 +14,7 @@ namespace ThompsonSamplingDemo
             // Define the number of of machines and their associated "hidden" success probabilities (payout)
             // The "hidden" probabilities are not known to us (in a real scenario) and we are trying to find the best one
             int N = 3;
-            // probabilities
+            // Probabilities (number has to match the N)
             double[] means = { 0.200, 0.250, 0.375 };
             double[] probs = new double[N];
             int[] successes = new int[N];
