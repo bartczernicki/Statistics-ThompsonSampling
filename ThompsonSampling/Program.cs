@@ -7,26 +7,29 @@ namespace ThompsonSamplingDemo
         static void Main(string[] args)
         {
             // Based on MSDN article: https://msdn.microsoft.com/en-us/magazine/mt829274.aspx
-            Console.WriteLine("Begin Thompson Sampling Demo");
+            ConsoleWriteLineColor("############################", ConsoleColor.DarkBlue);
+            ConsoleWriteLineColor("Begin Thompson Sampling Demo", ConsoleColor.DarkBlue);
+            ConsoleWriteLineColor("############################", ConsoleColor.DarkBlue);
 
             // Define the number of of machines and their associated "hidden" success probabilities (payout)
             // The "hidden" probabilities are not known to us (in a real scenario) and we are trying to find the best one
             int N = 3;
-            double[] means = new double[] { 0.2, 0.25, 0.35 };
+            // probabilities
+            double[] means = { 0.200, 0.250, 0.375 };
             double[] probs = new double[N];
             int[] successes = new int[N];
             int[] failures = new int[N];
 
             // Initialize the BetaSampler with a random number
-            // Note: use a hardcoded seed for reproducability
-            Random rnd = new Random(2);
+            // Note: Use a hardcoded seed for reproducability
+            Random rnd = new Random(DateTime.Now.Millisecond);
             var rndInt = rnd.Next();
             BetaSampler bs = new BetaSampler(rndInt);
 
             // Main Trials Loop
-            for (int trial = 0; trial < 20; ++trial)
+            for (int trial = 0; trial != 100; trial++)
             {
-                Console.WriteLine("Trial " + (trial+1));
+                ConsoleWriteLineColor("Trial " + (trial + 1), ConsoleColor.Magenta);
                 // For each machine, sample new estimated probability from a beta distribution,
                 // based on past successs/failures from trials.  First iteration starts at 0/0 for each machine
                 for (int i = 0; i < N; ++i)
@@ -46,7 +49,7 @@ namespace ThompsonSamplingDemo
                 int machine = 0;
                 double highProb = 0.0;
 
-                // Select the machine with the highest probability from the Beta distribution (Beta Sampler)
+                // Select the machine to play with the highest probability from the Beta distribution (Beta Sampler)
                 for (int i = 0; i < N; ++i)
                 {
                     if (probs[i] > highProb)
@@ -56,17 +59,17 @@ namespace ThompsonSamplingDemo
                     }
                 }
 
-                Console.Write("Playing machine " + (machine+1));
+                Console.Write("Playing machine " + (machine + 1));
                 double p = rnd.NextDouble();
 
                 if (p < means[machine])
                 {
-                    Console.WriteLine(" -- win");
+                    ConsoleWriteLineColor(" -- win", ConsoleColor.Green);
                     ++successes[machine];
                 }
                 else
                 {
-                    Console.WriteLine(" -- lose");
+                    ConsoleWriteLineColor(" -- lose", ConsoleColor.Red);
                     ++failures[machine];
                 }
             } // End of Trials Loop
@@ -88,6 +91,13 @@ namespace ThompsonSamplingDemo
             Console.WriteLine(string.Empty);
             Console.WriteLine("End of demo ");
             Console.ReadLine();
+        }
+
+        static void ConsoleWriteLineColor(string message, ConsoleColor consoleColor)
+        {
+            Console.ForegroundColor = consoleColor;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
     }
 }
