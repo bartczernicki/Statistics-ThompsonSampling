@@ -15,7 +15,7 @@ namespace ThompsonSamplingDemo
             // The "hidden" probabilities are not known to us (in a real scenario) and we are trying to find the best one
             int N = 3;
             // Probabilities (number has to match the N)
-            double[] means = { 0.200, 0.250, 0.375 };
+            double[] means = { 0.180, 0.225, 0.375 };
             double[] probs = new double[N];
             int[] successes = new int[N];
             int[] failures = new int[N];
@@ -27,7 +27,7 @@ namespace ThompsonSamplingDemo
             BetaSampler bs = new BetaSampler(rndInt);
 
             // Main Trials Loop
-            for (int trial = 0; trial != 100; trial++)
+            for (int trial = 0; trial != 200; trial++)
             {
                 ConsoleWriteLineColor("Trial " + (trial + 1), ConsoleColor.Magenta);
                 // For each machine, sample new estimated probability from a beta distribution,
@@ -74,14 +74,15 @@ namespace ThompsonSamplingDemo
                 }
             } // End of Trials Loop
 
-            Console.WriteLine("Final estimates of means: ");
+            Console.WriteLine(string.Empty);
+            ConsoleWriteLineColor("Final estimates of means: ", ConsoleColor.Yellow);
             for (int i = 0; i < N; ++i)
             {
                 double u = (successes[i] * 1.0) / (successes[i] + failures[i]);
                 Console.WriteLine(u.ToString("F4") + "  ");
             }
 
-            Console.WriteLine("Number times machine played:");
+            ConsoleWriteLineColor("Number times machine played:", ConsoleColor.Yellow);
             for (int i = 0; i < N; ++i)
             {
                 int ct = successes[i] + failures[i];
